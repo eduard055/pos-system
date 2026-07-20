@@ -3,19 +3,33 @@ import type { CartItem } from "../store/cartStore";
 
 interface Props {
 
+
   cart: CartItem[];
 
-  subtotal: number;
 
-  tax: number;
+  receiptNo:string;
 
-  total: number;
 
-  cash: number;
+  subtotal:number;
 
-  change: number;
 
-  onClose: () => void;
+  tax:number;
+
+
+  total:number;
+
+
+  cash:number;
+
+
+  change:number;
+
+
+  vatRate:number;
+
+
+  onClose:()=>void;
+
 
 }
 
@@ -23,21 +37,27 @@ interface Props {
 
 export default function ReceiptModal({
 
-  cart,
+cart,
 
-  subtotal,
+receiptNo,
 
-  tax,
+subtotal,
 
-  total,
+tax,
 
-  cash,
+total,
 
-  change,
+cash,
 
-  onClose
+change,
 
-}: Props) {
+vatRate,
+
+onClose
+
+
+}:Props){
+
 
 
 return (
@@ -55,6 +75,7 @@ z-50
 >
 
 
+
 <div
 className="
 bg-white
@@ -68,28 +89,37 @@ text-sm
 >
 
 
-{/* HEADER */}
 
 <h2
 className="
 text-center
 text-xl
 font-bold
-mb-1
 "
 >
 POS PRO
 </h2>
 
 
-<p className="text-center text-xs">
+
+<p className="
+text-center
+text-xs
+"
+>
 123 Main Street
 </p>
 
 
-<p className="text-center text-xs mb-4">
+<p className="
+text-center
+text-xs
+mb-4
+"
+>
 Manila, Philippines
 </p>
+
 
 
 
@@ -97,7 +127,14 @@ Manila, Philippines
 
 
 
-<div className="mt-4 space-y-1 text-xs">
+
+
+<div className="
+mt-4
+space-y-1
+text-xs
+">
+
 
 
 <div className="flex justify-between">
@@ -110,7 +147,9 @@ Date
 {new Date().toLocaleDateString()}
 </span>
 
+
 </div>
+
 
 
 
@@ -124,21 +163,9 @@ Time
 {new Date().toLocaleTimeString()}
 </span>
 
-</div>
-
-
-
-<div className="flex justify-between">
-
-<span>
-Cashier
-</span>
-
-<span>
-Admin
-</span>
 
 </div>
+
 
 
 
@@ -148,14 +175,20 @@ Admin
 Receipt #
 </span>
 
+
 <span>
-{Math.floor(Math.random()*90000)+10000}
+{receiptNo}
 </span>
 
+
 </div>
 
 
+
+
 </div>
+
+
 
 
 
@@ -163,49 +196,63 @@ Receipt #
 
 
 
-{/* ITEMS */}
 
-<div className="space-y-2">
+
+<div className="space-y-3">
 
 
 {
-cart.map(item => (
+cart.map(item=>(
 
-<div
-key={item.id}
->
+
+<div key={item.id}>
 
 
 <div className="font-bold">
+
 {item.name}
+
 </div>
+
 
 
 <div className="flex justify-between">
 
 
 <span>
+
 {item.quantity} x ₱{item.price.toFixed(2)}
+
 </span>
+
 
 
 <span>
-₱{(item.price * item.quantity).toFixed(2)}
+
+₱{(
+item.price * item.quantity
+).toFixed(2)}
+
 </span>
 
 
+
 </div>
 
 
+
 </div>
+
 
 
 ))
+
 }
 
 
-
 </div>
+
+
 
 
 
@@ -213,9 +260,14 @@ key={item.id}
 
 
 
-{/* TOTALS */}
+
+
+
 
 <div className="space-y-2">
+
+
+
 
 
 <div className="flex justify-between">
@@ -224,37 +276,58 @@ key={item.id}
 Subtotal
 </span>
 
+
 <span>
 ₱{subtotal.toFixed(2)}
 </span>
+
 
 </div>
 
 
 
 
+
+
+
+{
+vatRate > 0 && (
+
 <div className="flex justify-between">
 
+
 <span>
-VAT (12%)
+VAT ({vatRate}%)
 </span>
+
+
 
 <span>
 ₱{tax.toFixed(2)}
 </span>
 
+
 </div>
 
 
+)
+
+}
 
 
 
-<div className="
+
+
+
+
+<div
+className="
 flex
 justify-between
 font-bold
 text-base
-">
+"
+>
 
 
 <span>
@@ -270,7 +343,14 @@ TOTAL
 </div>
 
 
+
+
+
 </div>
+
+
+
+
 
 
 
@@ -279,7 +359,12 @@ TOTAL
 
 
 
+
+
+
+
 <div className="space-y-2">
+
 
 
 <div className="flex justify-between">
@@ -299,6 +384,7 @@ Cash
 
 
 
+
 <div className="flex justify-between">
 
 <span>
@@ -314,7 +400,11 @@ Change
 </div>
 
 
+
 </div>
+
+
+
 
 
 
@@ -324,19 +414,27 @@ Change
 
 
 
-<p className="
+
+
+
+<p
+className="
 text-center
 text-xs
 "
 >
 
-THANK YOU!
+THANK YOU ❤️
 
 <br/>
 
-Please Come Again ❤️
+Please Come Again
+
 
 </p>
+
+
+
 
 
 
@@ -348,6 +446,7 @@ gap-3
 mt-5
 "
 >
+
 
 
 <button
@@ -366,6 +465,7 @@ font-bold
 Print
 
 </button>
+
 
 
 
@@ -393,13 +493,18 @@ Close
 
 
 
+
+
+
 </div>
+
 
 
 </div>
 
 
 );
+
 
 
 }

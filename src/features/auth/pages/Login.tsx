@@ -7,13 +7,8 @@ export default function Login() {
   const navigate = useNavigate();
 
   const login = useAuthStore(
-    (state) => state.login
+    state => state.login
   );
-
-  const currentUser = useAuthStore(
-    (state) => state.currentUser
-  );
-
 
   const [username, setUsername] = useState("");
 
@@ -21,39 +16,27 @@ export default function Login() {
 
   const [error, setError] = useState("");
 
-
-
   function handleLogin(e: React.FormEvent) {
 
     e.preventDefault();
-
 
     const success = login(
       username,
       password
     );
 
-
     if (!success) {
 
-      setError(
-        "Invalid username or password."
-      );
+      setError("Invalid username or password.");
 
       return;
 
     }
 
+    const currentUser =
+      useAuthStore.getState().currentUser;
 
-    const user = useAuthStore.getState().currentUser;
-
-
-    console.log("LOGIN USER:", user);
-
-
-    if (
-      user?.role?.toLowerCase() === "admin"
-    ) {
+    if (currentUser?.role === "Admin") {
 
       navigate("/");
 
@@ -65,12 +48,9 @@ export default function Login() {
 
   }
 
-
-
   return (
 
     <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-
 
       <form
         onSubmit={handleLogin}
@@ -84,7 +64,6 @@ export default function Login() {
         "
       >
 
-
         <div className="text-center">
 
           <h1 className="text-4xl font-bold">
@@ -97,8 +76,6 @@ export default function Login() {
 
         </div>
 
-
-
         <div>
 
           <label className="block mb-2 font-semibold">
@@ -106,28 +83,20 @@ export default function Login() {
           </label>
 
           <input
-
             value={username}
-
-            onChange={(e)=>
+            onChange={(e) =>
               setUsername(e.target.value)
             }
-
             className="
             border
             rounded-xl
             w-full
             p-3
             "
-
             placeholder="Enter username"
-
           />
 
         </div>
-
-
-
 
         <div>
 
@@ -135,49 +104,33 @@ export default function Login() {
             Password
           </label>
 
-
           <input
-
             type="password"
-
             value={password}
-
-            onChange={(e)=>
+            onChange={(e) =>
               setPassword(e.target.value)
             }
-
             className="
             border
             rounded-xl
             w-full
             p-3
             "
-
             placeholder="Enter password"
-
           />
 
-
         </div>
-
-
 
         {error && (
 
           <p className="text-red-600 text-sm">
-
             {error}
-
           </p>
 
         )}
 
-
-
         <button
-
           type="submit"
-
           className="
           bg-blue-600
           hover:bg-blue-700
@@ -187,17 +140,11 @@ export default function Login() {
           rounded-xl
           font-bold
           "
-
         >
-
           Login
-
         </button>
 
-
-
       </form>
-
 
     </div>
 

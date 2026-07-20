@@ -1,6 +1,6 @@
 import { useProductStore } from "../../../store/productStore";
 import { useEffect, useState } from "react";
-import type { Product } from "../../pos/types";
+import type { Product } from "../../../store/productStore";
 
 
 interface Props {
@@ -25,7 +25,7 @@ export default function ProductModal({
   );
 
 
-
+  const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
@@ -36,6 +36,7 @@ export default function ProductModal({
 
   useEffect(() => {
 
+    setCode(product?.code || "");
 
     setName(product?.name || "");
 
@@ -60,14 +61,31 @@ export default function ProductModal({
 
   function handleSave() {
 
-      if (!name || !category || !price || !stock || !image) {
-  alert("Please complete all fields.");
-  return;
-}
-    const newProduct = {
+
+    if (
+      !code ||
+      !name ||
+      !category ||
+      !price ||
+      !stock ||
+      !image
+    ) {
+
+      alert("Please complete all fields.");
+
+      return;
+
+    }
+
+
+
+    const newProduct: Product = {
 
 
       id: product?.id ?? Date.now(),
+
+
+      code,
 
 
       name,
@@ -123,10 +141,11 @@ export default function ProductModal({
 
 
 
+
   return (
 
 
-        <div
+    <div
       onClick={onClose}
       className="
       fixed
@@ -140,33 +159,49 @@ export default function ProductModal({
     >
 
 
-
-          <div
-      onClick={(e) => e.stopPropagation()}
-      className="
-      bg-white
-      rounded-2xl
-      p-6
-      w-[400px]
-      shadow-xl
-      "
-    >
-
+      <div
+        onClick={(e)=>e.stopPropagation()}
+        className="
+        bg-white
+        rounded-2xl
+        p-6
+        w-[400px]
+        shadow-xl
+        "
+      >
 
 
-        <h2
-          className="
-          text-2xl
-          font-bold
-          mb-5
-          "
-        >
+        <h2 className="
+        text-2xl
+        font-bold
+        mb-5
+        ">
 
           {product ? "Edit Product" : "Add Product"}
 
         </h2>
 
 
+
+        <input
+
+          placeholder="Product Code (BRG001)"
+
+          value={code}
+
+          className="
+          border
+          p-3
+          w-full
+          mb-3
+          rounded-lg
+          "
+
+          onChange={(e)=>
+            setCode(e.target.value)
+          }
+
+        />
 
 
 
@@ -192,8 +227,6 @@ export default function ProductModal({
 
 
 
-
-
         <input
 
           placeholder="Category"
@@ -213,8 +246,6 @@ export default function ProductModal({
           }
 
         />
-
-
 
 
 
@@ -242,8 +273,6 @@ export default function ProductModal({
 
 
 
-
-
         <input
 
           placeholder="Stock"
@@ -265,8 +294,6 @@ export default function ProductModal({
           }
 
         />
-
-
 
 
 
@@ -294,11 +321,7 @@ export default function ProductModal({
 
 
 
-
         <div className="flex gap-3">
-
-
-
 
 
           <button
@@ -317,8 +340,6 @@ export default function ProductModal({
             Cancel
 
           </button>
-
-
 
 
 
@@ -342,16 +363,10 @@ export default function ProductModal({
           </button>
 
 
-
-
         </div>
 
 
-
-
       </div>
-
-
 
 
     </div>

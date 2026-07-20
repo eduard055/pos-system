@@ -5,6 +5,7 @@ import CheckoutModal from "./CheckoutModal";
 import ReceiptModal from "./ReceiptModal";
 import { useProductStore } from "../../../store/productStore";
 import { useSalesStore } from "../../../store/salesStore";
+import { useSettingsStore } from "../../../store/settingsStore";
 
 
 interface Props {
@@ -43,30 +44,11 @@ const decreaseStock = useProductStore(
 );
 
 
-const [showCheckout, setShowCheckout] = useState(false);
-
-const [showReceipt, setShowReceipt] = useState(false);
-
-const [cashPaid, setCashPaid] = useState(0);
-
-const [change, setChange] = useState(0);
-
-
-
-const subtotal = cart.reduce(
-
-  (sum,item)=>
-    sum + item.price * item.quantity,
-
-  0
-
-);
-
-
 
 const addSale = useSalesStore(
   state => state.addSale
 );
+
 
 
 const sales = useSalesStore(
@@ -75,10 +57,50 @@ const sales = useSalesStore(
 
 
 
-const tax = subtotal * 0.12;
+// GET VAT FROM SETTINGS
+
+const vatRate = useSettingsStore(
+  state => state.vatRate
+);
+
+
+
+const [showCheckout,setShowCheckout] = useState(false);
+
+const [showReceipt,setShowReceipt] = useState(false);
+
+const [cashPaid,setCashPaid] = useState(0);
+
+const [change,setChange] = useState(0);
+
+const [receiptNo,setReceiptNo] = useState("");
+
+
+
+
+
+const subtotal = cart.reduce(
+
+(sum,item)=>
+
+sum + item.price * item.quantity,
+
+0
+
+);
+
+
+
+
+// DYNAMIC VAT
+
+const tax = subtotal * (vatRate / 100);
+
 
 
 const total = subtotal + tax;
+
+
 
 
 
@@ -95,6 +117,7 @@ p-5
 <h2 className="text-xl font-bold mb-5">
 Cart
 </h2>
+
 
 
 
@@ -132,12 +155,14 @@ removeItem={removeItem}
 
 
 
+
 <div className="
 mt-5
 border-t
 pt-4
 space-y-2
 ">
+
 
 
 <div className="flex justify-between">
@@ -154,10 +179,15 @@ Subtotal
 
 
 
+
+
+{
+vatRate > 0 && (
+
 <div className="flex justify-between">
 
 <span>
-Tax (12%)
+VAT ({vatRate}%)
 </span>
 
 <span>
@@ -165,6 +195,12 @@ Tax (12%)
 </span>
 
 </div>
+
+)
+
+}
+
+
 
 
 
@@ -193,6 +229,8 @@ Total
 
 
 
+
+
 <button
 
 onClick={()=>setShowCheckout(true)}
@@ -214,7 +252,13 @@ Checkout
 </button>
 
 
+
+
 </div>
+
+
+
+
 
 
 
@@ -228,24 +272,27 @@ total={total}
 onClose={()=>setShowCheckout(false)}
 
 
+
 onSuccess={(cash,change)=>{
 
 
-// CREATE RECEIPT NUMBER HERE
-
-const receiptNo = String(
-  sales.length + 1
+const newReceiptNo = String(
+sales.length + 1
 ).padStart(5,"0");
 
 
 
-// SAVE SALE
+setReceiptNo(newReceiptNo);
+
+
+
+
 
 addSale({
 
 id:Date.now(),
 
-receiptNo,
+receiptNo:newReceiptNo,
 
 date:new Date().toLocaleDateString(),
 
@@ -268,9 +315,11 @@ change
 
 
 
-// REMOVE STOCK
+
+
 
 cart.forEach(item=>{
+
 
 decreaseStock(
 
@@ -280,19 +329,24 @@ item.quantity
 
 );
 
+
 });
 
 
 
-// SHOW RECEIPT
+
+
+
 
 setCashPaid(cash);
 
 setChange(change);
 
+
 setShowCheckout(false);
 
 setShowReceipt(true);
+
 
 
 }}
@@ -308,13 +362,19 @@ setShowReceipt(true);
 
 
 
+
+
+
 {
 showReceipt && (
 
+
+
 <ReceiptModal
 
-
 cart={cart}
+
+receiptNo={receiptNo}
 
 subtotal={subtotal}
 
@@ -326,24 +386,25 @@ cash={cashPaid}
 
 change={change}
 
+vatRate={vatRate}
 
 onClose={()=>{
 
-
 setShowReceipt(false);
-
 
 clearCart();
 
-
 }}
 
-
 />
+
 
 )
 
 }
+
+
+
 
 
 

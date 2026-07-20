@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useProductStore } from "../../../store/productStore";
 import ProductModal from "../components/ProductModal";
-import type { Product } from "../../pos/types";
+import type { Product } from "../../../store/productStore";
 
 export default function Inventory() {
   const products = useProductStore((state) => state.products);

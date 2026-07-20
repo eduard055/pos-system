@@ -2,102 +2,95 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface User {
-
+  id: number;
   username: string;
-
   password: string;
-
   role: "Admin" | "Cashier";
-
 }
 
 interface AuthStore {
-
   currentUser: User | null;
 
   users: User[];
 
-  login: (
-    username: string,
-    password: string
-  ) => boolean;
+  login: (username: string, password: string) => boolean;
 
   logout: () => void;
 
+  addUser: (user: User) => void;
+
+  updateUser: (id: number, user: Partial<User>) => void;
+
+  deleteUser: (id: number) => void;
 }
 
 export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set, get) => ({
+      currentUser: null,
 
-persist(
+      users: [
+        {
+          id: 1,
+          username: "admin",
+          password: "admin123",
+          role: "Admin",
+        },
+        {
+          id: 2,
+          username: "cashier",
+          password: "cashier123",
+          role: "Cashier",
+        },
+      ],
 
-(set, get) => ({
+      login: (username, password) => {
+        const user = get().users.find(
+          (u) =>
+            u.username === username &&
+            u.password === password
+        );
 
-currentUser: null,
+        if (!user) return false;
 
-users: [
+        set({
+          currentUser: user,
+        });
 
-{
+        return true;
+      },
 
-username: "admin",
+      logout: () =>
+        set({
+          currentUser: null,
+        }),
 
-password: "admin123",
+      addUser: (user) =>
+        set((state) => ({
+          users: [...state.users, user],
+        })),
 
-role: "Admin"
+      updateUser: (id, user) =>
+        set((state) => ({
+          users: state.users.map((u) =>
+            u.id === id
+              ? {
+                  ...u,
+                  ...user,
+                }
+              : u
+          ),
+        })),
 
-},
-
-{
-
-username: "cashier",
-
-password: "cashier123",
-
-role: "Cashier"
-
-}
-
-],
-
-login: (username, password) => {
-
-const user = get().users.find(
-
-u =>
-
-u.username === username &&
-
-u.password === password
-
-);
-
-if (!user) return false;
-
-set({
-
-currentUser: user
-
-});
-
-return true;
-
-},
-
-logout: () =>
-
-set({
-
-currentUser: null
-
-})
-
-}),
-
-{
-
-name: "auth-storage"
-
-}
-
-)
-
+      deleteUser: (id) =>
+        set((state) => ({
+          users: state.users.filter(
+            (u) => u.id !== id
+          ),
+        })),
+    }),
+    {
+      name: "auth-storage",
+    }
+  )
 );

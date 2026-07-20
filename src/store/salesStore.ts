@@ -44,41 +44,54 @@ export interface Sale {
 
 interface SalesStore {
 
-
   sales: Sale[];
-
 
   addSale: (sale: Sale) => void;
 
+  generateReceiptNumber: () => string;
 
 }
 
 
 
-export const useSalesStore = create<SalesStore>((set) => ({
+
+export const useSalesStore = create<SalesStore>((set,get)=>( {
+
+
+sales: [],
 
 
 
-  sales: [],
+addSale:(sale)=>
+
+set((state)=>({
+
+sales:[
+
+...state.sales,
+
+sale
+
+]
+
+})),
 
 
 
-  addSale: (sale) =>
 
 
-    set((state) => ({
+generateReceiptNumber:()=>{
+
+const sales = get().sales;
 
 
-      sales: [
-
-        ...state.sales,
-
-        sale
-
-      ]
+const nextNumber = sales.length + 1;
 
 
-    }))
+return String(nextNumber).padStart(5,"0");
+
+
+}
 
 
 
