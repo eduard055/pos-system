@@ -1,85 +1,85 @@
-import ProductGrid from "../components/ProductGrid";
-import Cart from "../components/Cart";
-import { useCart } from "../hooks/useCart";
+  import ProductGrid from "../components/ProductGrid";
+  import Cart from "../components/Cart";
+  import { useCart } from "../hooks/useCart";
 
 
-export default function POS() {
+  export default function POS() {
 
-  const {
+    const {
 
-   cart,
+    cart,
 
- addToCart,
+  addToCart,
 
- increaseQuantity,
+  increaseQuantity,
 
- decreaseQuantity,
+  decreaseQuantity,
 
- removeItem,
+  removeItem,
 
- clearCart
+  clearCart
 
-} = useCart();
- 
-  console.log("ADD FUNCTION:", addToCart);  
- console.log("POS clearCart:", clearCart);
+  } = useCart();
+  
+    console.log("ADD FUNCTION:", addToCart);  
+  console.log("POS clearCart:", clearCart);
 
-  return (
+    return (
 
-    <div className="space-y-6">
-
-
-      <div>
-
-        <h1 className="text-3xl font-bold">
-          Point of Sale
-        </h1>
-
-        <p className="text-slate-500">
-          Process customer orders quickly.
-        </p>
-
-      </div>
+      <div className="space-y-6">
 
 
+        <div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <h1 className="text-3xl font-bold">
+            Point of Sale
+          </h1>
 
-
-        <div className="xl:col-span-2">
-
-
-          <ProductGrid
-
-            onAdd={addToCart}
-
-          />
-
+          <p className="text-slate-500">
+            Process customer orders quickly.
+          </p>
 
         </div>
 
 
 
-        <Cart
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
- cart={cart}
 
- increaseQuantity={increaseQuantity}
+          <div className="xl:col-span-2">
 
- decreaseQuantity={decreaseQuantity}
 
- removeItem={removeItem}
+            <ProductGrid
 
- clearCart={clearCart}
+              onAdd={addToCart}
 
-/>
+            />
+
+
+          </div>
+
+
+
+          <Cart
+
+  cart={cart}
+
+  increaseQuantity={increaseQuantity}
+
+  decreaseQuantity={decreaseQuantity}
+
+  removeItem={removeItem}
+
+  clearCart={clearCart}
+
+  />
+
+
+        </div>
 
 
       </div>
 
+    );
 
-    </div>
-
-  );
-
-}
+  }

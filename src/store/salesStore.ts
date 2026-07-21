@@ -1,15 +1,16 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 
 export interface SaleItem {
 
-  id: number;
+  id:number;
 
-  name: string;
+  name:string;
 
-  quantity: number;
+  quantity:number;
 
-  price: number;
+  price:number;
 
 }
 
@@ -17,49 +18,49 @@ export interface SaleItem {
 
 export interface Sale {
 
-  id: number;
+  id:number;
 
-  receiptNo: string;
+  receiptNo:string;
 
-  date: string;
+  date:string;
 
-  time: string;
+  time:string;
 
-  items: SaleItem[];
+  items:SaleItem[];
 
-  subtotal: number;
+  subtotal:number;
 
-  tax: number;
+  tax:number;
 
-  total: number;
+  total:number;
 
-  cash: number;
+  cash:number;
 
-  change: number;
+  change:number;
 
 }
-
 
 
 
 interface SalesStore {
 
-  sales: Sale[];
+  sales:Sale[];
 
-  addSale: (sale: Sale) => void;
+  addSale:(sale:Sale)=>void;
 
-  generateReceiptNumber: () => string;
+  generateReceiptNumber:()=>string;
 
 }
 
 
 
+export const useSalesStore = create<SalesStore>()(
 
-export const useSalesStore = create<SalesStore>((set,get)=>( {
+persist(
 
+(set,get)=>({
 
-sales: [],
-
+sales:[],
 
 
 addSale:(sale)=>
@@ -67,32 +68,36 @@ addSale:(sale)=>
 set((state)=>({
 
 sales:[
-
 ...state.sales,
-
 sale
-
 ]
 
 })),
 
 
 
-
-
 generateReceiptNumber:()=>{
 
-const sales = get().sales;
+const sales=get().sales;
 
-
-const nextNumber = sales.length + 1;
+const nextNumber=sales.length+1;
 
 
 return String(nextNumber).padStart(5,"0");
 
+}
+
+
+}),
+
+
+{
+
+name:"sales-storage"
 
 }
 
 
+)
 
-}));
+);

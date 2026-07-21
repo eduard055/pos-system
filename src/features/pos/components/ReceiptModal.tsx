@@ -3,33 +3,23 @@ import type { CartItem } from "../store/cartStore";
 
 interface Props {
 
-
   cart: CartItem[];
-
 
   receiptNo:string;
 
-
   subtotal:number;
-
 
   tax:number;
 
-
   total:number;
-
 
   cash:number;
 
-
   change:number;
-
 
   vatRate:number;
 
-
   onClose:()=>void;
-
 
 }
 
@@ -60,6 +50,176 @@ onClose
 
 
 
+function printReceipt(){
+
+  const receipt =
+    document.querySelector(".receipt");
+
+
+  if(!receipt) return;
+
+
+
+  const printWindow =
+    window.open(
+      "",
+      "",
+      "width=700,height=900"
+    );
+
+
+
+  if(!printWindow) return;
+
+
+
+  printWindow.document.write(`
+
+<html>
+
+<head>
+
+<title>
+POS PRO Receipt
+</title>
+
+
+<style>
+
+
+*{
+
+box-sizing:border-box;
+
+}
+
+
+
+body{
+
+font-family:monospace;
+
+margin:0;
+
+padding:20px;
+
+display:flex;
+
+justify-content:center;
+
+background:white;
+
+}
+
+
+
+.receipt{
+
+width:380px;
+
+font-size:14px;
+
+color:black;
+
+}
+
+
+
+.flex{
+
+display:flex;
+
+justify-content:space-between;
+
+}
+
+
+
+hr{
+
+border:none;
+
+border-top:1px dashed black;
+
+margin:15px 0;
+
+}
+
+
+
+.no-print{
+
+display:none !important;
+
+}
+
+
+
+.text-center{
+
+text-align:center;
+
+}
+
+
+
+.font-bold{
+
+font-weight:bold;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+<body>
+
+
+<div class="receipt">
+
+${receipt.innerHTML}
+
+</div>
+
+
+</body>
+
+
+</html>
+
+`);
+
+
+
+
+printWindow.document.close();
+
+
+
+printWindow.focus();
+
+
+
+setTimeout(()=>{
+
+printWindow.print();
+
+printWindow.close();
+
+},500);
+
+
+}
+
+
+
+
+
 return (
 
 <div
@@ -70,7 +230,7 @@ bg-black/40
 flex
 items-center
 justify-center
-z-50
+z-[9999]
 "
 >
 
@@ -78,13 +238,16 @@ z-50
 
 <div
 className="
+receipt
 bg-white
-w-[300px]
+w-[380px]
 rounded-xl
 shadow-2xl
 p-5
 font-mono
 text-sm
+relative
+z-[10000]
 "
 >
 
@@ -102,24 +265,18 @@ POS PRO
 
 
 
-<p className="
-text-center
-text-xs
-"
->
+<p className="text-center text-xs">
+
 123 Main Street
+
 </p>
 
 
-<p className="
-text-center
-text-xs
-mb-4
-"
->
+<p className="text-center text-xs mb-4">
+
 Manila, Philippines
-</p>
 
+</p>
 
 
 
@@ -128,13 +285,7 @@ Manila, Philippines
 
 
 
-
-<div className="
-mt-4
-space-y-1
-text-xs
-">
-
+<div className="mt-4 space-y-1 text-xs">
 
 
 <div className="flex justify-between">
@@ -147,9 +298,7 @@ Date
 {new Date().toLocaleDateString()}
 </span>
 
-
 </div>
-
 
 
 
@@ -163,9 +312,7 @@ Time
 {new Date().toLocaleTimeString()}
 </span>
 
-
 </div>
-
 
 
 
@@ -175,14 +322,11 @@ Time
 Receipt #
 </span>
 
-
 <span>
 {receiptNo}
 </span>
 
-
 </div>
-
 
 
 
@@ -197,13 +341,11 @@ Receipt #
 
 
 
-
 <div className="space-y-3">
 
 
 {
 cart.map(item=>(
-
 
 <div key={item.id}>
 
@@ -226,7 +368,6 @@ cart.map(item=>(
 </span>
 
 
-
 <span>
 
 ₱{(
@@ -236,13 +377,10 @@ item.price * item.quantity
 </span>
 
 
-
 </div>
 
 
-
 </div>
-
 
 
 ))
@@ -256,8 +394,8 @@ item.price * item.quantity
 
 
 
-<hr className="border-dashed my-4"/>
 
+<hr className="border-dashed my-4"/>
 
 
 
@@ -267,24 +405,17 @@ item.price * item.quantity
 <div className="space-y-2">
 
 
-
-
-
 <div className="flex justify-between">
 
 <span>
 Subtotal
 </span>
 
-
 <span>
 ₱{subtotal.toFixed(2)}
 </span>
 
-
 </div>
-
-
 
 
 
@@ -301,7 +432,6 @@ VAT ({vatRate}%)
 </span>
 
 
-
 <span>
 ₱{tax.toFixed(2)}
 </span>
@@ -309,12 +439,9 @@ VAT ({vatRate}%)
 
 </div>
 
-
 )
 
 }
-
-
 
 
 
@@ -326,9 +453,7 @@ flex
 justify-between
 font-bold
 text-base
-"
->
-
+">
 
 <span>
 TOTAL
@@ -344,10 +469,7 @@ TOTAL
 
 
 
-
-
 </div>
-
 
 
 
@@ -361,10 +483,7 @@ TOTAL
 
 
 
-
-
 <div className="space-y-2">
-
 
 
 <div className="flex justify-between">
@@ -380,7 +499,6 @@ Cash
 
 
 </div>
-
 
 
 
@@ -408,7 +526,6 @@ Change
 
 
 
-
 <hr className="border-dashed my-4"/>
 
 
@@ -416,13 +533,7 @@ Change
 
 
 
-
-<p
-className="
-text-center
-text-xs
-"
->
+<p className="text-center text-xs">
 
 THANK YOU ❤️
 
@@ -430,9 +541,7 @@ THANK YOU ❤️
 
 Please Come Again
 
-
 </p>
-
 
 
 
@@ -444,6 +553,7 @@ className="
 flex
 gap-3
 mt-5
+no-print
 "
 >
 
@@ -451,13 +561,17 @@ mt-5
 
 <button
 
+onClick={printReceipt}
+
 className="
 flex-1
 bg-blue-600
+hover:bg-blue-700
 text-white
 py-2
 rounded-lg
 font-bold
+cursor-pointer
 "
 
 >
@@ -479,6 +593,7 @@ flex-1
 border
 py-2
 rounded-lg
+cursor-pointer
 "
 
 >
@@ -504,7 +619,5 @@ Close
 
 
 );
-
-
 
 }
