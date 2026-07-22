@@ -1,199 +1,183 @@
 import { useState } from "react";
 import type { Product } from "../types";
 import FlavorModal from "./FlavorModal";
-
+import ShakeSizeModal from "./ShakeSizeModal";
+import FriesFlavorModal from "./FriesFlavorModal";
 
 interface Props {
   product: Product;
   onAdd: (product: Product) => void;
 }
 
-
-
 export default function ProductCard({
   product,
   onAdd,
 }: Props) {
 
+  const [showFlavor, setShowFlavor] = useState(false);
 
-const [showFlavor, setShowFlavor] = useState(false);
+  const [showSize, setShowSize] = useState(false);
 
+  const [showFriesFlavor, setShowFriesFlavor] = useState(false);
 
+  function handleAdd(){
 
-function handleAdd(){
+    // SHAKES
+    if(product.hasSize){
+        
+      setShowSize(true);
 
+      return;
 
-  if(
-    product.category === "Chicken Wings" ||
-    product.category === "Chicken Ala Carte" ||
-    product.name.toLowerCase().includes("poppers")
-  ){
+    }
 
-    setShowFlavor(true);
+    // CHICKEN / POPPERS
+    if(
 
-    return;
+      product.category === "Chicken Wings" ||
+
+      product.category === "Chicken Ala Carte" ||
+
+      product.name.toLowerCase().includes("poppers")
+
+    ){
+
+      setShowFlavor(true);
+
+      return;
+
+    }
+
+    onAdd(product);
 
   }
 
+  function addFlavor(flavor:string){
 
+    const flavoredProduct: Product = {
 
-  onAdd(product);
+      ...product,
 
+      id: Date.now(),
 
-}
+      name:`${product.name} - ${flavor}`
 
+    };
 
+    onAdd(flavoredProduct);
 
+    setShowFlavor(false);
 
+  }
 
-function addFlavor(flavor:string){
+  function addSize(size:string, price:number){
 
+    const sizedProduct: Product = {
 
+      ...product,
 
-const flavoredProduct: Product = {
+      id: Date.now(),
 
+      name:`${product.name} (${size})`,
 
-  ...product,
+      price
 
+    };
 
-  // IMPORTANT FIX
-  // creates different cart item per flavor
-  id: Date.now(),
+    onAdd(sizedProduct);
 
+    setShowSize(false);
 
-  name:
-  `${product.name} - ${flavor}`
+  }
 
+  return(
 
-};
+    <>
 
+      <div
+      className="
+      bg-white
+      rounded-2xl
+      border
+      p-5
+      ">
 
+        <div className="text-5xl text-center">
 
+          {product.image}
 
-onAdd(flavoredProduct);
+        </div>
 
+        <h3 className="mt-4 font-bold">
 
+          {product.name}
 
-setShowFlavor(false);
+        </h3>
 
+        <p className="text-slate-500">
 
+          {product.category}
 
-}
+        </p>
 
+        <p className="font-bold mt-2">
 
+          ₱{product.price}
 
+        </p>
 
+        <button
 
+        onClick={handleAdd}
 
+        className="
+        mt-3
+        bg-blue-600
+        text-white
+        px-4
+        py-2
+        rounded-lg
+        w-full
+        "
 
-return (
+        >
 
-<>
+          Add
 
+        </button>
 
-<div
-className="
-bg-white
-rounded-2xl
-border
-p-5
-"
->
+      </div>
 
+      {showFlavor && (
 
+        <FlavorModal
 
-<div className="text-5xl text-center">
+        product={product}
 
-{product.image}
+        onSelect={addFlavor}
 
-</div>
+        onClose={()=>setShowFlavor(false)}
 
+        />
 
+      )}
 
+      {showSize && (
 
+        <ShakeSizeModal
 
-<h3 className="mt-4 font-bold">
+          product={product}
 
-{product.name}
+          onSelect={addSize}
 
-</h3>
+          onClose={()=>setShowSize(false)}
 
+        />
 
+      )}
 
+    </>
 
-<p className="text-slate-500">
-
-{product.category}
-
-</p>
-
-
-
-
-<p className="font-bold mt-2">
-
-₱{product.price}
-
-</p>
-
-
-
-
-
-<button
-
-onClick={handleAdd}
-
-className="
-mt-3
-bg-blue-600
-text-white
-px-4
-py-2
-rounded-lg
-w-full
-"
-
->
-
-Add
-
-</button>
-
-
-
-
-
-</div>
-
-
-
-
-
-
-{
-showFlavor && (
-
-<FlavorModal
-
-product={product}
-
-onSelect={addFlavor}
-
-onClose={()=>setShowFlavor(false)}
-
-/>
-
-)
-
-}
-
-
-
-</>
-
-
-);
-
+  );
 
 }

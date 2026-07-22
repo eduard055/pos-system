@@ -1,16 +1,37 @@
 export interface Product {
 
-id:number;
-name:string;
-price:number;
-category:string;
-image:string;
+  id: string | number;
 
-}
+  code?: string;
 
+  name: string;
 
-export interface CartItem extends Product {
+  category: string;
 
-quantity:number;
+  price: number;
+
+  stock: number;
+
+  image: string;
+  hasFlavor?: boolean;
+  flavors?: string[];
+  hasSize?: boolean;
+  sizes?: { name: string; price: number }[];
+  hasFriesFlavor?: boolean;
+  friesFlavors?: string[];
+
+  options?: {
+
+    title: string;
+
+    values: {
+
+      name: string;
+
+      price?: number;
+
+    }[];
+
+  };
 
 }

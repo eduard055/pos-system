@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 
 export interface SaleItem {
 
-  id:number;
+  id:string | number;
 
   name:string;
 

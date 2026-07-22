@@ -1,609 +1,84 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api/v1";
 
 export interface Product {
-
-  id:number;
-
-  code:string;
-
-  name:string;
-
-  category:string;
-
-  price:number;
-
-  stock:number;
-
-  image:string;
-
-  hasFlavor?:boolean;
-
-  flavors?:string[];
-
+  id: string | number;
+  code: string;
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+  image: string;
+  hasFlavor?: boolean;
+  flavors?: string[];
+  hasSize?: boolean;
+  sizes?: { name: string; price: number }[];
+  hasFriesFlavor?: boolean;
+  friesFlavors?: string[];
 }
 
+type ApiProduct = {
+  id: string;
+  sku: string;
+  name: string;
+  price: number | string;
+  stockQuantity: number;
+  image: string | null;
+  category: { name: string } | null;
+};
 
+type ProductInput = Omit<Product, "id">;
 
 interface ProductStore {
-
-
-  products:Product[];
-
-
-  addProduct:(product:Product)=>void;
-
-
-  deleteProduct:(id:number)=>void;
-
-
-  updateProduct:(
-    id:number,
-    product:Partial<Product>
-  )=>void;
-
-
-  decreaseStock:(
-    id:number,
-    quantity:number
-  )=>void;
-
-
+  products: Product[];
+  isLoading: boolean;
+  error: string | null;
+  fetchProducts: () => Promise<void>;
+  addProduct: (product: ProductInput) => Promise<boolean>;
+  deleteProduct: (id: string | number) => Promise<boolean>;
+  updateProduct: (id: string | number, product: ProductInput) => Promise<boolean>;
+  decreaseStock: (id: string | number, quantity: number) => Promise<boolean>;
 }
 
-
-
-const flavors = [
-
-"Cheezzy",
-"Teriyaki",
-"Gravy",
-"BBQ",
-"Salted Egg",
-"Garlic Parmesan",
-"Buffalo"
-
-];
-
-
-
-export const useProductStore = create<ProductStore>()(
-
-persist(
-
-(set)=>({
-
-
-products:[
-
-
-
-// SHAKES
-
-{
-id:1,
-code:"SHK001",
-name:"Avocado",
-category:"Shake",
-price:100,
-stock:0,
-image:"🥑"
-},
-
-
-{
-id:2,
-code:"SHK002",
-name:"Mango",
-category:"Shake",
-price:100,
-stock:0,
-image:"🥭"
-},
-
-
-{
-id:3,
-code:"SHK003",
-name:"Strawberry",
-category:"Shake",
-price:100,
-stock:0,
-image:"🍓"
-},
-
-
-{
-id:4,
-code:"SHK004",
-name:"Guyabano",
-category:"Shake",
-price:100,
-stock:0,
-image:"🍈"
-},
-
-
-
-// CHICKEN WINGS FLAVOR BASE
-
-{
-id:5,
-code:"CHKA001",
-name:"6pcs Chicken Wings",
-category:"Chicken Wings",
-price:100,
-stock:0,
-image:"🍗",
-
-hasFlavor:true,
-flavors
-
-},
-
-
-{
-id:6,
-code:"CHKA002",
-name:"12pcs Chicken Wings",
-category:"Chicken Wings",
-price:100,
-stock:0,
-image:"🍗",
-
-hasFlavor:true,
-flavors
-
-},
-
-
-{
-id:7,
-code:"CHKA003",
-name:"24pcs Chicken Wings",
-category:"Chicken Wings",
-price:100,
-stock:0,
-image:"🍗",
-
-hasFlavor:true,
-flavors
-
-},
-
-
-
-
-// POPPERS
-
-{
-id:8,
-code:"PPRA001",
-name:"Poppers Ala Carte",
-category:"Poppers",
-price:100,
-stock:0,
-image:"🍗",
-
-hasFlavor:true,
-flavors
-
-},
-
-
-
-
-// BURGERS
-
-
-{
-id:9,
-code:"BRG001",
-name:"Classic Burger",
-category:"Burger",
-price:100,
-stock:0,
-image:"🍔"
-},
-
-
-{
-id:10,
-code:"BRG002",
-name:"Cheese Burger",
-category:"Burger",
-price:100,
-stock:0,
-image:"🍔"
-},
-
-
-{
-id:11,
-code:"BRG003",
-name:"Ultimate Burger",
-category:"Burger",
-price:100,
-stock:0,
-image:"🍔"
-},
-
-
-
-
-// FRIES
-
-
-{
-id:12,
-code:"FRY001",
-name:"Regular Fries",
-category:"Fries",
-price:100,
-stock:0,
-image:"🍟"
-},
-
-
-{
-id:13,
-code:"FRY002",
-name:"Large Fries",
-category:"Fries",
-price:100,
-stock:0,
-image:"🍟"
-},
-
-
-
-
-// LEMONADE
-
-
-{
-id:14,
-code:"LMD001",
-name:"Ppino Lemonade",
-category:"Lemonade",
-price:100,
-stock:0,
-image:"🍋"
-},
-
-
-{
-id:15,
-code:"LMD002",
-name:"Yakult Lemonade",
-category:"Lemonade",
-price:100,
-stock:0,
-image:"🍋"
-},
-
-
-{
-id:16,
-code:"LMD003",
-name:"Chia Lemonade",
-category:"Lemonade",
-price:100,
-stock:0,
-image:"🍋"
-},
-
-
-{
-id:17,
-code:"LMD004",
-name:"Strawberry Syrup Lemonade",
-category:"Lemonade",
-price:100,
-stock:0,
-image:"🍓"
-},
-
-
-{
-id:18,
-code:"LMD005",
-name:"Blueberry Syrup Lemonade",
-category:"Lemonade",
-price:100,
-stock:0,
-image:"🫐"
-},
-
-
-{
-id:19,
-code:"LMD006",
-name:"Lychee Syrup Lemonade",
-category:"Lemonade",
-price:100,
-stock:0,
-image:"🍋"
-},
-
-
-{
-id:20,
-code:"LMD007",
-name:"Orange Syrup Lemonade",
-category:"Lemonade",
-price:100,
-stock:0,
-image:"🍊"
-},
-
-
-{
-id:21,
-code:"LMD008",
-name:"Classic Lemonade",
-category:"Lemonade",
-price:100,
-stock:0,
-image:"🍋"
-},
-
-
-
-
-// ADDONS
-
-
-{
-id:22,
-code:"ADD001",
-name:"Extra Sauce",
-category:"Add-ons",
-price:100,
-stock:0,
-image:"➕"
-},
-
-
-{
-id:23,
-code:"ADD002",
-name:"Plain Rice",
-category:"Add-ons",
-price:100,
-stock:0,
-image:"🍚"
-},
-
-
-{
-id:24,
-code:"ADD003",
-name:"Soda",
-category:"Add-ons",
-price:100,
-stock:0,
-image:"🥤"
-},
-
-
-{
-id:25,
-code:"ADD004",
-name:"Popping Boba",
-category:"Add-ons",
-price:100,
-stock:0,
-image:"🧋"
-},
-
-
-{
-id:26,
-code:"ADD005",
-name:"Nata",
-category:"Add-ons",
-price:100,
-stock:0,
-image:"🧋"
-},
-
-
-
-
-// COMBOS
-
-
-{
-id:27,
-code:"C1",
-name:"Chicken Wings + Lemonade Classic",
-category:"Combo",
-price:100,
-stock:0,
-image:"🔥"
-},
-
-
-{
-id:28,
-code:"C2",
-name:"Chicken Wings + Small Fries + Lemonade Classic",
-category:"Combo",
-price:100,
-stock:0,
-image:"🔥"
-},
-
-
-{
-id:29,
-code:"C3",
-name:"Chicken Wings + Classic Burger + Small Fries + Lemonade Classic",
-category:"Combo",
-price:100,
-stock:0,
-image:"🔥"
-},
-
-
-{
-id:30,
-code:"B1",
-name:"Classic Burger + Lemonade Classic",
-category:"Combo",
-price:100,
-stock:0,
-image:"🍔"
-},
-
-
-{
-id:31,
-code:"B2",
-name:"Classic Burger + Regular Fries + Lemonade Classic",
-category:"Combo",
-price:100,
-stock:0,
-image:"🍔"
-},
-
-
-{
-id:32,
-code:"P1",
-name:"Poppers + Lemonade Classic",
-category:"Combo",
-price:100,
-stock:0,
-image:"🔥"
-},
-
-
-{
-id:33,
-code:"P2",
-name:"Poppers + Regular Fries + Lemonade Classic",
-category:"Combo",
-price:100,
-stock:0,
-image:"🔥"
-},
-
-
-{
-id:34,
-code:"P3",
-name:"Poppers + Classic Burger + Regular Fries + Lemonade Classic",
-category:"Combo",
-price:100,
-stock:0,
-image:"🔥"
+function fromApi(product: ApiProduct): Product {
+  return { id: product.id, code: product.sku, name: product.name, category: product.category?.name ?? "Uncategorized", price: Number(product.price), stock: product.stockQuantity, image: product.image || "📦" };
 }
 
-
-
-],
-
-
-
-
-addProduct:(product)=>
-
-set((state)=>({
-
-products:[
-...state.products,
-product
-]
-
-})),
-
-
-
-
-deleteProduct:(id)=>
-
-set((state)=>({
-
-products:
-state.products.filter(
-p=>p.id!==id
-)
-
-})),
-
-
-
-
-
-updateProduct:(id,product)=>
-
-set((state)=>({
-
-products:
-state.products.map((p)=>
-
-p.id===id
-
-?
-
-{
-...p,
-...product
+function payload(product: ProductInput) {
+  return { name: product.name, sku: product.code, category: product.category, price: product.price, stockQuantity: product.stock, image: product.image };
 }
 
-:
-
-p
-
-)
-
-})),
-
-
-
-
-
-decreaseStock:(id,quantity)=>
-
-set((state)=>({
-
-products:
-state.products.map((p)=>
-
-p.id===id
-
-?
-
-{
-...p,
-
-stock:Math.max(
-0,
-p.stock-quantity
-)
-
+async function request(path: string, options?: RequestInit) {
+  const response = await fetch(`${API_URL}${path}`, { headers: { "Content-Type": "application/json", ...options?.headers }, ...options });
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.message ?? "Unable to contact the POS API");
+  }
+  return response.status === 204 ? null : response.json();
 }
 
-:
-
-p
-
-)
-
-}))
-
-
-
-}),
-
-
-{
-name:"product-storage"
-}
-
-)
-
-);
+export const useProductStore = create<ProductStore>((set, get) => ({
+  products: [], isLoading: false, error: null,
+  fetchProducts: async () => {
+    set({ isLoading: true, error: null });
+    try { const products = await request("/products") as ApiProduct[]; set({ products: products.map(fromApi), isLoading: false }); }
+    catch (error) { set({ error: error instanceof Error ? error.message : "Unable to load products", isLoading: false }); }
+  },
+  addProduct: async (product) => {
+    try { const created = await request("/products", { method: "POST", body: JSON.stringify(payload(product)) }) as ApiProduct; set({ products: [...get().products, fromApi(created)] }); return true; }
+    catch (error) { set({ error: error instanceof Error ? error.message : "Unable to add product" }); return false; }
+  },
+  updateProduct: async (id, product) => {
+    try { const updated = await request(`/products/${String(id)}`, { method: "PATCH", body: JSON.stringify(payload(product)) }) as ApiProduct; set({ products: get().products.map((item) => item.id === id ? fromApi(updated) : item) }); return true; }
+    catch (error) { set({ error: error instanceof Error ? error.message : "Unable to update product" }); return false; }
+  },
+  deleteProduct: async (id) => {
+    try { await request(`/products/${String(id)}`, { method: "DELETE" }); set({ products: get().products.filter((product) => product.id !== id) }); return true; }
+    catch (error) { set({ error: error instanceof Error ? error.message : "Unable to delete product" }); return false; }
+  },
+  decreaseStock: async (id, quantity) => {
+    try { const result = await request(`/products/${String(id)}/stock`, { method: "PATCH", body: JSON.stringify({ quantity: -quantity, reason: "POS checkout" }) }) as { product: ApiProduct }; set({ products: get().products.map((product) => product.id === id ? fromApi(result.product) : product) }); return true; }
+    catch (error) { set({ error: error instanceof Error ? error.message : "Unable to update stock" }); return false; }
+  },
+}));

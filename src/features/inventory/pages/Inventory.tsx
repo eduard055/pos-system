@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProductStore } from "../../../store/productStore";
 import ProductModal from "../components/ProductModal";
 import type { Product } from "../../../store/productStore";
 
 export default function Inventory() {
   const products = useProductStore((state) => state.products);
+  const fetchProducts = useProductStore((state) => state.fetchProducts);
+  const isLoading = useProductStore((state) => state.isLoading);
+  const error = useProductStore((state) => state.error);
 
   const deleteProduct = useProductStore(
     (state) => state.deleteProduct
@@ -19,6 +22,8 @@ export default function Inventory() {
 
   const [categoryFilter, setCategoryFilter] =
     useState("All");
+
+  useEffect(() => { void fetchProducts(); }, [fetchProducts]);
 
   function handleAdd() {
     setSelectedProduct(undefined);
@@ -68,19 +73,21 @@ export default function Inventory() {
             className="border rounded-lg p-3 flex-1"
           />
 
-          <select
-            value={categoryFilter}
-            onChange={(e) =>
-              setCategoryFilter(e.target.value)
-            }
-            className="border rounded-lg p-3 w-48"
-          >
-            <option>All</option>
-            <option>Drinks</option>
-            <option>Bakery</option>
-            <option>Snacks</option>
-            <option>Meals</option>
-          </select>
+         <select
+  value={categoryFilter}
+  onChange={(e) => setCategoryFilter(e.target.value)}
+  className="border rounded-lg p-3 w-48"
+>
+  <option value="All">All</option>
+  <option value="Shake">Shake</option>
+  <option value="Chicken Wings">Chicken Wings</option>
+  <option value="Poppers">Poppers</option>
+  <option value="Burger">Burger</option>
+  <option value="Fries">Fries</option>
+  <option value="Lemonade">Lemonade</option>
+  <option value="Add-ons">Add-ons</option>
+  <option value="Combo">Combo</option>
+</select>
         </div>
 
         <table className="w-full">
@@ -162,13 +169,14 @@ export default function Inventory() {
                     </button>
 
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         if (
                           window.confirm(
                             `Delete "${product.name}"?`
                           )
                         ) {
-                          deleteProduct(product.id);
+                          const deleted = await deleteProduct(product.id);
+                          if (!deleted) alert("Unable to delete product. Please try again.");
                         }
                       }}
                       className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
@@ -181,6 +189,8 @@ export default function Inventory() {
             ))}
           </tbody>
         </table>
+        {isLoading && <p className="mt-4 text-slate-500">Loading products…</p>}
+        {error && <p className="mt-4 text-red-600">{error}</p>}
       </div>
 
       {showModal && (

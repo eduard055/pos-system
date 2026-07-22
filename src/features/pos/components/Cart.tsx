@@ -12,11 +12,11 @@ interface Props {
 
   cart: CartItemType[];
 
-  increaseQuantity: (id:number)=>void;
+  increaseQuantity: (id:string | number)=>void;
 
-  decreaseQuantity: (id:number)=>void;
+  decreaseQuantity: (id:string | number)=>void;
 
-  removeItem: (id:number)=>void;
+  removeItem: (id:string | number)=>void;
 
   clearCart: () => void;
 

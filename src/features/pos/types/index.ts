@@ -1,6 +1,6 @@
 export interface Product {
 
-  id:number;
+  id:string | number;
 
   name:string;
 
@@ -9,6 +9,12 @@ export interface Product {
   category:string;
 
   image:string;
+  hasFlavor?: boolean;
+  flavors?: string[];
+  hasSize?: boolean;
+  sizes?: { name: string; price: number }[];
+  hasFriesFlavor?: boolean;
+  friesFlavors?: string[];
 
 }
 
