@@ -1,145 +1,160 @@
 import { create } from "zustand";
 import type { Product } from "../types";
 
-
 export interface CartItem extends Product {
-  quantity:number;
-}
+  quantity: number;
 
+  originalProductId?: string | number;
+
+  selectedFlavor?: {
+    id: string | number;
+    name: string;
+    price: number;
+  };
+
+  addons?: {
+    id: string | number;
+    name: string;
+    price: number;
+  }[];
+}
 
 interface CartStore {
+  cart: CartItem[];
 
-cart: CartItem[];
+  addToCart: (product: Product) => void;
 
-addToCart:(product:Product)=>void;
+  increaseQuantity: (id: string | number) => void;
 
-increaseQuantity:(id:string | number)=>void;
+  decreaseQuantity: (id: string | number) => void;
 
-decreaseQuantity:(id:string | number)=>void;
+  removeItem: (id: string | number) => void;
 
-removeItem:(id:string | number)=>void;
-
-clearCart:()=>void;
-
+  clearCart: () => void;
 }
 
+export const useCartStore = create<CartStore>((set) => ({
 
-export const useCartStore=create<CartStore>((set)=>({
+  cart: [],
 
+  addToCart: (product) =>
 
-cart:[],
+    set((state) => {
 
+      const item = product as CartItem;
 
-addToCart:(product)=>
+      const existing = state.cart.find(cartItem =>
 
-set(state=>{
+        cartItem.id === item.id &&
 
-const existing = state.cart.find(
-item=>item.id===product.id
-);
+        JSON.stringify(cartItem.selectedFlavor) ===
+        JSON.stringify(item.selectedFlavor) &&
 
+        JSON.stringify(cartItem.addons) ===
+        JSON.stringify(item.addons)
 
-if(existing){
+      );
 
-return {
-cart:state.cart.map(item=>
+      if (existing) {
 
-item.id===product.id
+        return {
 
-?
+          cart: state.cart.map(cartItem =>
 
-{
-...item,
-quantity:item.quantity+1
-}
+            cartItem.id === existing.id &&
 
-:item
+            JSON.stringify(cartItem.selectedFlavor) ===
+            JSON.stringify(item.selectedFlavor) &&
 
-)
-};
+            JSON.stringify(cartItem.addons) ===
+            JSON.stringify(item.addons)
 
-}
+              ? {
+                  ...cartItem,
+                  quantity: cartItem.quantity + 1,
+                }
 
+              : cartItem
 
-return {
+          ),
 
-cart:[
-...state.cart,
-{
-...product,
-quantity:1
-}
-]
+        };
 
-};
+      }
 
+      return {
 
-}),
+        cart: [
 
+          ...state.cart,
 
+          {
+            ...item,
+            quantity: 1,
+          },
 
-increaseQuantity:(id)=>
+        ],
 
-set(state=>({
+      };
 
-cart:state.cart.map(item=>
+    }),
 
-item.id===id
+  increaseQuantity: (id) =>
 
-?
-{
-...item,
-quantity:item.quantity+1
-}
-:
-item
+    set((state) => ({
 
-)
+      cart: state.cart.map(item =>
 
-})),
+        item.id === id
 
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
 
+          : item
 
-decreaseQuantity:(id)=>
+      ),
 
-set(state=>({
+    })),
 
-cart:state.cart
-.map(item=>
+  decreaseQuantity: (id) =>
 
-item.id===id
+    set((state) => ({
 
-?
-{
-...item,
-quantity:item.quantity-1
-}
-:
-item
+      cart: state.cart
 
-)
-.filter(item=>item.quantity>0)
+        .map(item =>
 
-})),
+          item.id === id
 
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
 
+            : item
 
-removeItem:(id)=>
+        )
 
-set(state=>({
+        .filter(item => item.quantity > 0),
 
-cart:state.cart.filter(
-item=>item.id!==id
-)
+    })),
 
-})),
+  removeItem: (id) =>
 
+    set((state) => ({
 
+      cart: state.cart.filter(item => item.id !== id),
 
-clearCart: () =>
-  set({
-    cart: [],
-  }),
+    })),
 
+  clearCart: () =>
+
+    set({
+
+      cart: [],
+
+    }),
 
 }));

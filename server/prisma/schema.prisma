@@ -8,33 +8,72 @@ datasource db {
 }
 
 model Category {
-  id   String @id @default(cuid())
-  name String @unique
+  id        String    @id @default(cuid())
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
 
-  products Product[]
+model Product {
+  id            String  @id @default(cuid())
+  name          String
+  sku           String  @unique
+  price         Float
+  stockQuantity Int
+  image         String?
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  modifierGroups ModifierGroup[]
+  saleItems      SaleItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Product {
-  id String @id @default(cuid())
+model ModifierGroup {
+  id       String  @id @default(cuid())
+  name     String
+  required Boolean @default(false)
+  multiple Boolean @default(false)
 
-  name String
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
 
-  sku String @unique
+  options ModifierOption[]
+}
 
-  price Float
+model ModifierOption {
+  id    String @id @default(cuid())
+  name  String
+  price Float  @default(0)
 
-  stockQuantity Int
+  modifierGroupId String
+  modifierGroup   ModifierGroup @relation(fields: [modifierGroupId], references: [id])
+}
 
-  image String?
+model Sale {
+  id            String @id @default(cuid())
+  invoiceNumber String @unique
+  totalAmount   Float
 
-  categoryId String
-
-  category Category @relation(fields: [categoryId], references: [id])
+  items SaleItem[]
 
   createdAt DateTime @default(now())
+}
 
-  updatedAt DateTime @updatedAt
+model SaleItem {
+  id String @id @default(cuid())
+
+  saleId    String
+  productId String
+
+  quantity Int
+  price    Float
+  subtotal Float
+
+  sale    Sale    @relation(fields: [saleId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }

@@ -1,183 +1,272 @@
 import { useState } from "react";
 import type { Product } from "../types";
+import LemonadeModifierModal from "../../../components/LemonadeModifierModal";
 import FlavorModal from "./FlavorModal";
 import ShakeSizeModal from "./ShakeSizeModal";
-import FriesFlavorModal from "./FriesFlavorModal";
+import ComboModifierModal from "./ComboModifierModal";
+
 
 interface Props {
   product: Product;
   onAdd: (product: Product) => void;
 }
 
+
 export default function ProductCard({
   product,
   onAdd,
 }: Props) {
 
-  const [showFlavor, setShowFlavor] = useState(false);
 
-  const [showSize, setShowSize] = useState(false);
+ const [showLemonade, setShowLemonade] = useState(false);
+const [showFlavor, setShowFlavor] = useState(false);
+const [showSize, setShowSize] = useState(false);
+const [showCombo, setShowCombo] = useState(false);
+  
 
-  const [showFriesFlavor, setShowFriesFlavor] = useState(false);
+
 
   function handleAdd(){
 
-    // SHAKES
-    if(product.hasSize){
-        
-      setShowSize(true);
+  // 🍔 COMBO MODIFIER
+  if(product.category === "Combo"){
 
-      return;
+    setShowCombo(true);
 
-    }
-
-    // CHICKEN / POPPERS
-    if(
-
-      product.category === "Chicken Wings" ||
-
-      product.category === "Chicken Ala Carte" ||
-
-      product.name.toLowerCase().includes("poppers")
-
-    ){
-
-      setShowFlavor(true);
-
-      return;
-
-    }
-
-    onAdd(product);
+    return;
 
   }
 
+  // 🍋 NEW MODIFIER ENGINE
+  if(
+    product.modifierGroups &&
+    product.modifierGroups.length > 0
+  ){
+
+    setShowLemonade(true);
+
+    return;
+
+  }
+
+  // OLD SHAKE SYSTEM
+  if(product.hasSize){
+
+    setShowSize(true);
+
+    return;
+
+  }
+
+  // OLD FLAVOR SYSTEM
+  if(product.hasFlavor){
+
+    setShowFlavor(true);
+
+    return;
+
+  }
+
+  onAdd(product);
+
+}
+
+
+
   function addFlavor(flavor:string){
 
-    const flavoredProduct: Product = {
+
+    onAdd({
 
       ...product,
 
-      id: Date.now(),
+      id:Date.now(),
 
-      name:`${product.name} - ${flavor}`
+      name:
+      `${product.name} - ${flavor}`
 
-    };
+    });
 
-    onAdd(flavoredProduct);
 
     setShowFlavor(false);
 
   }
 
-  function addSize(size:string, price:number){
 
-    const sizedProduct: Product = {
+
+
+  function addSize(
+    size:string,
+    price:number
+  ){
+
+
+    onAdd({
 
       ...product,
 
-      id: Date.now(),
+      id:Date.now(),
 
-      name:`${product.name} (${size})`,
+      name:
+      `${product.name} (${size})`,
 
       price
 
-    };
+    });
 
-    onAdd(sizedProduct);
 
     setShowSize(false);
 
   }
 
-  return(
 
-    <>
 
-      <div
-      className="
-      bg-white
-      rounded-2xl
-      border
-      p-5
-      ">
 
-        <div className="text-5xl text-center">
+return(
 
-          {product.image}
+<>
 
-        </div>
+<div
+className="
+bg-white
+rounded-2xl
+border
+p-5
+"
+>
 
-        <h3 className="mt-4 font-bold">
+<div className="text-5xl text-center">
 
-          {product.name}
+{product.image}
 
-        </h3>
+</div>
 
-        <p className="text-slate-500">
 
-          {product.category}
+<h3 className="mt-4 font-bold">
 
-        </p>
+{product.name}
 
-        <p className="font-bold mt-2">
+</h3>
 
-          ₱{product.price}
 
-        </p>
+<p className="text-slate-500">
 
-        <button
+{product.category}
 
-        onClick={handleAdd}
+</p>
 
-        className="
-        mt-3
-        bg-blue-600
-        text-white
-        px-4
-        py-2
-        rounded-lg
-        w-full
-        "
 
-        >
+<p className="font-bold mt-2">
 
-          Add
+₱{product.price}
 
-        </button>
+</p>
 
-      </div>
 
-      {showFlavor && (
+<button
 
-        <FlavorModal
+onClick={handleAdd}
 
-        product={product}
+className="
+mt-3
+bg-blue-600
+text-white
+px-4
+py-2
+rounded-lg
+w-full
+"
 
-        onSelect={addFlavor}
+>
 
-        onClose={()=>setShowFlavor(false)}
+Add
 
-        />
+</button>
 
-      )}
 
-      {showSize && (
+</div>
 
-        <ShakeSizeModal
 
-          product={product}
 
-          onSelect={addSize}
+{
+showLemonade &&
 
-          onClose={()=>setShowSize(false)}
+<LemonadeModifierModal
 
-        />
+product={product}
 
-      )}
+onConfirm={onAdd}
 
-    </>
+onClose={()=>
+setShowLemonade(false)
+}
 
-  );
+/>
+
+}
+
+
+
+
+{
+showFlavor &&
+
+<FlavorModal
+
+product={product}
+
+onSelect={addFlavor}
+
+onClose={()=>
+setShowFlavor(false)
+}
+
+/>
+
+}
+
+
+
+
+{
+showSize &&
+
+<ShakeSizeModal
+
+product={product}
+
+onSelect={addSize}
+
+onClose={()=>
+setShowSize(false)
+}
+
+/>
+
+}
+
+{
+showCombo &&
+
+<ComboModifierModal
+
+product={product}
+
+onConfirm={onAdd}
+
+onClose={()=>
+setShowCombo(false)
+}
+
+/>
+
+}
+
+
+</>
+
+
+);
+
 
 }

@@ -20,6 +20,7 @@ export default function Sidebar() {
     (state) => state.collapsed
   );
 
+
   const menu = [
 
     {
@@ -29,12 +30,14 @@ export default function Sidebar() {
       roles: ["admin"],
     },
 
+
     {
       name: "POS",
       path: "/pos",
       icon: <ShoppingCart size={22} />,
       roles: ["admin", "cashier"],
     },
+
 
     {
       name: "Inventory",
@@ -43,12 +46,14 @@ export default function Sidebar() {
       roles: ["admin"],
     },
 
+
     {
       name: "Reports",
       path: "/reports",
       icon: <BarChart3 size={22} />,
       roles: ["admin"],
     },
+
 
     {
       name: "Settings",
@@ -59,11 +64,13 @@ export default function Sidebar() {
 
   ];
 
+
   const filteredMenu = menu.filter(item =>
     item.roles.includes(
       currentUser?.role.toLowerCase() ?? ""
     )
   );
+
 
   return (
 
@@ -98,6 +105,7 @@ export default function Sidebar() {
 
       </div>
 
+
       {!collapsed && (
 
         <div className="px-6 py-4 border-b border-slate-700">
@@ -106,17 +114,21 @@ export default function Sidebar() {
             Logged in as
           </p>
 
+
           <p className="font-bold">
             {currentUser?.username}
           </p>
+
 
           <span className="text-xs bg-blue-600 px-3 py-1 rounded-full">
             {currentUser?.role.toUpperCase()}
           </span>
 
+
         </div>
 
       )}
+
 
       <nav className="flex flex-col gap-2 p-3 flex-1">
 
@@ -125,6 +137,7 @@ export default function Sidebar() {
           <NavLink
             key={item.path}
             to={item.path}
+
             className={({ isActive }) =>
               `
               flex
@@ -139,27 +152,31 @@ export default function Sidebar() {
                   ? "bg-blue-600"
                   : "hover:bg-slate-800"
               }
+
               `
             }
+
           >
 
             {item.icon}
 
+
             {!collapsed && (
 
               <span>
-
                 {item.name}
-
               </span>
 
             )}
+
 
           </NavLink>
 
         ))}
 
+
       </nav>
+
 
     </aside>
 

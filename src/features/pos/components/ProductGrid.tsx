@@ -3,23 +3,40 @@ import { useProductStore } from "../../../store/productStore";
 import ProductCard from "./ProductCard";
 import type { Product } from "../types";
 
+
 interface Props {
   onAdd: (product: Product) => void;
 }
 
-export default function ProductGrid({
+
+
+function ProductGrid({
   onAdd
 }: Props) {
+
 
   const products = useProductStore(
     state => state.products
   );
-  const fetchProducts = useProductStore(state => state.fetchProducts);
 
-  useEffect(() => { void fetchProducts(); }, [fetchProducts]);
+
+  const fetchProducts = useProductStore(
+    state => state.fetchProducts
+  );
+
+
+  useEffect(() => {
+
+    void fetchProducts();
+
+  }, [fetchProducts]);
+
+
 
   const [selectedCategory, setSelectedCategory] =
     useState("All");
+
+
 
   const categories = [
     "All",
@@ -33,6 +50,8 @@ export default function ProductGrid({
     "Combo"
   ];
 
+
+
   const filteredProducts =
     selectedCategory === "All"
       ? products
@@ -41,9 +60,12 @@ export default function ProductGrid({
             product.category === selectedCategory
         );
 
+
+
   return (
 
     <div>
+
 
       {/* CATEGORY BUTTONS */}
 
@@ -68,18 +90,19 @@ export default function ProductGrid({
               }
 
               className={`
-              px-4
-              py-2
-              rounded-xl
-              font-semibold
-              transition
+                px-4
+                py-2
+                rounded-xl
+                font-semibold
+                transition
 
-              ${
-                selectedCategory === category
-                  ? "bg-blue-600 text-white"
-                  : "bg-white border hover:bg-slate-100"
-              }
-
+                ${
+                  selectedCategory === category
+                  ?
+                  "bg-blue-600 text-white"
+                  :
+                  "bg-white border hover:bg-slate-100"
+                }
               `}
 
             >
@@ -93,7 +116,11 @@ export default function ProductGrid({
 
       </div>
 
-      {/* PRODUCTS */}
+
+
+
+
+      {/* PRODUCT LIST */}
 
       <div
         className="
@@ -103,6 +130,7 @@ export default function ProductGrid({
         gap-5
         "
       >
+
 
         {
           filteredProducts.map(product => (
@@ -120,10 +148,16 @@ export default function ProductGrid({
           ))
         }
 
+
       </div>
+
 
     </div>
 
   );
 
 }
+
+
+
+export default ProductGrid;
