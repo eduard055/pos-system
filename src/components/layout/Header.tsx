@@ -1,7 +1,10 @@
 import { Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { useAuthStore } from "../../store/authStore";
+import {
+  PORTFOLIO_DEMO,
+  useAuthStore,
+} from "../../store/authStore";
 import { useSidebarStore } from "../../store/sidebarStore";
 
 export default function Header() {
@@ -24,7 +27,8 @@ export default function Header() {
 
     logout();
 
-    navigate("/login");
+    // TEMPORARY: stay in the app during portfolio demo
+    navigate(PORTFOLIO_DEMO ? "/" : "/login");
 
   }
 

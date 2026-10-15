@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import MainLayout from "../components/layout/MainLayout";
 
@@ -10,13 +10,15 @@ import Settings from "../features/settings/pages/Settings";
 import Login from "../features/auth/pages/Login";
 
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
+import { PORTFOLIO_DEMO } from "../store/authStore";
 
 
 export const router = createBrowserRouter([
 
   {
     path: "/login",
-    element: <Login />,
+    // TEMPORARY: skip login page for portfolio demo
+    element: PORTFOLIO_DEMO ? <Navigate to="/" replace /> : <Login />,
   },
 
 

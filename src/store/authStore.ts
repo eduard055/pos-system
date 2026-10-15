@@ -1,12 +1,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+// TEMPORARY: set to false to restore the login page
+export const PORTFOLIO_DEMO = true;
+
 export interface User {
   id: number;
   username: string;
   password: string;
   role: "Admin" | "Cashier";
 }
+
+const DEMO_ADMIN: User = {
+  id: 1,
+  username: "admin",
+  password: "admin123",
+  role: "Admin",
+};
 
 interface AuthStore {
   currentUser: User | null;
@@ -27,15 +37,10 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
-      currentUser: null,
+      currentUser: PORTFOLIO_DEMO ? DEMO_ADMIN : null,
 
       users: [
-        {
-          id: 1,
-          username: "admin",
-          password: "admin123",
-          role: "Admin",
-        },
+        DEMO_ADMIN,
         {
           id: 2,
           username: "cashier",
@@ -62,7 +67,8 @@ export const useAuthStore = create<AuthStore>()(
 
       logout: () =>
         set({
-          currentUser: null,
+          // Keep demo session alive for portfolio viewing
+          currentUser: PORTFOLIO_DEMO ? DEMO_ADMIN : null,
         }),
 
       addUser: (user) =>
@@ -91,6 +97,11 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: "auth-storage",
+      onRehydrateStorage: () => (state) => {
+        if (PORTFOLIO_DEMO && state) {
+          state.currentUser = DEMO_ADMIN;
+        }
+      },
     }
   )
 );

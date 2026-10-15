@@ -1,5 +1,8 @@
 import { Navigate } from "react-router-dom";
-import { useAuthStore } from "../../store/authStore";
+import {
+  PORTFOLIO_DEMO,
+  useAuthStore,
+} from "../../store/authStore";
 
 interface Props {
   children: React.ReactNode;
@@ -15,11 +18,12 @@ export default function RoleGuard({
     (state) => state.currentUser
   );
 
-  if (!currentUser) {
+  // TEMPORARY: skip login redirect for portfolio demo
+  if (!currentUser && !PORTFOLIO_DEMO) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!allowedRoles.includes(currentUser.role)) {
+  if (currentUser && !allowedRoles.includes(currentUser.role)) {
     return <Navigate to="/pos" replace />;
   }
 
